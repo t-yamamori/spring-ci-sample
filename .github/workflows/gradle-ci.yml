@@ -1,0 +1,30 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "master" ]  # masterにpushされたら自動実行
+  pull_request:
+    branches: [ "master" ]  # masterへのPR作成時も実行
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # クラウド上のLinux（Ubuntu）環境を準備
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4  # ①リポジトリのコードを取得
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4  # ②Java環境をセットアップ
+      with:
+        java-version: '21'         # Java 21 を指定
+        distribution: 'temurin'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew  # ③検証用スクリプトを実行可能にする
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3  # ④ビルド高速化のためのキャッシュ設定
+
+    - name: Build and Test with Gradle
+      run: ./gradlew test   # ⑤テスト実行（コンパイルも自動実行）
